@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게이트 아카이브 · 헌터 관리 협회 기밀 자료</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#07080C;
+    --ink:#0E0F16;
+    --ink-2:#14161F;
+    --line:#21232E;
+    --line-soft:#191B26;
+    --gate:#57E0D2;
+    --gate-deep:#2BB6C9;
+    --danger:#FF4757;
+    --amber:#FFB347;
+    --text:#E9EAF0;
+    --muted:#8C90A6;
+    --dim:#5A5E72;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --body:'Noto Sans KR',sans-serif;
+    --display:'Black Han Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--void);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.7;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gate);color:var(--void)}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- background field ---------- */
+  .grid-bg{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(var(--line-soft) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+    background-size:64px 64px;
+    opacity:.35;
+    mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 75%);
+    -webkit-mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 75%);
+  }
+
+  /* ---------- top classification bar ---------- */
+  .topbar{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 22px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+    color:var(--muted);
+    background:rgba(7,8,12,.72);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .blink{color:var(--gate)}
+  .topbar .blink::before{content:"●";margin-right:7px;animation:pulse 2.2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+  .topbar .right{color:var(--dim)}
+
+  /* ---------- layout shell ---------- */
+  .wrap{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;z-index:2}
+  .fracture{position:absolute;inset:0;z-index:-1;display:flex;justify-content:center;align-items:center;pointer-events:none}
+  .fracture svg{height:108%;width:auto;opacity:.9}
+  .crack{
+    fill:none;stroke:var(--gate);stroke-width:1.4;
+    filter:drop-shadow(0 0 6px var(--gate)) drop-shadow(0 0 22px var(--gate-deep));
+    stroke-dasharray:1600;stroke-dashoffset:1600;
+    animation:draw 2.6s cubic-bezier(.16,1,.3,1) .3s forwards;
+  }
+  .crack.branch{stroke-width:.8;opacity:.6;animation-delay:1.1s;animation-duration:2s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.35em;color:var(--gate);
+    margin-bottom:26px;opacity:0;animation:fadeUp .8s ease 1.4s forwards;
+  }
+  .hero h1{
+    font-family:var(--display);font-weight:400;
+    font-size:clamp(78px,17vw,200px);line-height:.86;letter-spacing:.02em;
+    text-shadow:0 0 40px rgba(87,224,210,.25);
+    opacity:0;animation:fadeUp 1s ease 1.6s forwards;
+  }
+  .hero .sub{
+    margin-top:30px;max-width:560px;color:var(--muted);font-size:16px;
+    opacity:0;animation:fadeUp .9s ease 2s forwards;
+  }
+  .hero .sub b{color:var(--text);font-weight:500}
+  .scrollcue{
+    position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+    font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--dim);
+    opacity:0;animation:fadeUp 1s ease 2.4s forwards;
+  }
+  .scrollcue span{display:block;width:1px;height:34px;background:linear-gradient(var(--gate),transparent);margin:10px auto 0}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ---------- section frame ---------- */
+  section{position:relative;z-index:2;padding:108px 0}
+  .shead{display:flex;align-items:baseline;gap:18px;margin-bottom:14px}
+  .snum{font-family:var(--mono);font-size:13px;color:var(--gate);letter-spacing:.1em}
+  .stag{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase}
+  .stitle{font-family:var(--display);font-weight:400;font-size:clamp(34px,6vw,58px);line-height:1.04;margin-bottom:18px}
+  .slead{color:var(--muted);max-width:640px;font-size:16px;margin-bottom:46px}
+  .slead b{color:var(--gate);font-weight:500}
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- cards grid ---------- */
+  .grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .grid.c2{grid-template-columns:repeat(2,1fr)}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  .cell{background:var(--ink);padding:30px 28px;transition:background .3s}
+  .cell:hover{background:var(--ink-2)}
+  .cell .k{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--gate-deep);margin-bottom:14px}
+  .cell h3{font-size:19px;font-weight:700;margin-bottom:10px}
+  .cell p{color:var(--muted);font-size:14.5px}
+
+  /* ---------- time highlight ---------- */
+  .timebox{
+    margin-top:1px;background:var(--ink);border:1px solid var(--line);border-top:none;
+    padding:40px 30px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px;justify-content:center;
+    text-align:center;
+  }
+  .timebox .big{font-family:var(--display);font-size:clamp(40px,8vw,76px);line-height:1;color:var(--gate);text-shadow:0 0 30px rgba(87,224,210,.3)}
+  .timebox .eq{font-family:var(--display);font-size:clamp(30px,6vw,54px);color:var(--dim)}
+  .timebox .lbl{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--muted);margin-top:8px}
+  .timebox .real .big{color:var(--text)}
+
+  /* ---------- gate types ---------- */
+  .types{display:grid;gap:18px}
+  .type{
+    border:1px solid var(--line);background:var(--ink);padding:30px 30px 30px 34px;
+    position:relative;overflow:hidden;
+  }
+  .type::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .type.t1::before{background:var(--gate)}
+  .type.t2::before{background:var(--amber)}
+  .type.t3::before{background:var(--danger)}
+  .type .row{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:12px}
+  .type h3{font-size:22px;font-weight:700}
+  .badge{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;padding:4px 10px;border-radius:2px;border:1px solid currentColor}
+  .type.t1 .badge{color:var(--gate)}
+  .type.t2 .badge{color:var(--amber)}
+  .type.t3 .badge{color:var(--danger)}
+  .type p{color:var(--muted);font-size:15px}
+  .type .clear{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.05em}
+  .type .clear b{color:var(--text);font-weight:500}
+
+  /* ---------- rank ladder ---------- */
+  .ladder{border:1px solid var(--line)}
+  .rank{display:grid;grid-template-columns:120px 1fr;align-items:center;
+    background:var(--ink);border-bottom:1px solid var(--line);padding:22px 28px;gap:24px;transition:background .3s}
+  .rank:last-child{border-bottom:none}
+  .rank:hover{background:var(--ink-2)}
+  .rank .tier{font-family:var(--display);font-size:32px;line-height:1;letter-spacing:.04em;color:var(--dim)}
+  .rank .body h3{font-size:16px;font-weight:700;margin-bottom:4px}
+  .rank .body p{color:var(--muted);font-size:14px}
+  .rank.r-fd .tier{color:#6b7080}
+  .rank.r-cb .tier{color:#9aa0bc}
+  .rank.r-a  .tier{color:#bfe7ff}
+  .rank.r-s  .tier{color:var(--gate);text-shadow:0 0 18px rgba(87,224,210,.45)}
+  .rank.r-ex{background:linear-gradient(90deg,rgba(255,71,87,.07),var(--ink) 60%)}
+  .rank.r-ex .tier{color:var(--danger);text-shadow:0 0 20px rgba(255,71,87,.4)}
+  .rank.r-ex .body h3{color:var(--danger)}
+  .titles{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .titles span{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);border:1px solid var(--line);padding:3px 9px}
+
+  /* ---------- association powers ---------- */
+  .powers{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .power{background:var(--ink);padding:18px 18px;font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+  .power .dot{color:var(--gate);font-family:var(--mono);flex:none}
+  .powers.hidden-set .power{color:#a87078}
+  .powers.hidden-set .power .dot{color:var(--danger)}
+
+  .subhead{font-family:var(--mono);font-size:12px;letter-spacing:.25em;color:var(--dim);margin:42px 0 16px;text-transform:uppercase}
+  .subhead.warn{color:var(--danger)}
+
+  /* ---------- building ---------- */
+  .building{border:1px solid var(--line);background:var(--ink);overflow:hidden}
+  .floor{display:grid;grid-template-columns:74px 1fr;border-bottom:1px solid var(--line);transition:background .3s}
+  .floor:last-child{border-bottom:none}
+  .floor:hover{background:var(--ink-2)}
+  .floor .lvl{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:15px;color:var(--gate);background:var(--ink-2);border-right:1px solid var(--line)}
+  .floor .info{padding:18px 24px}
+  .floor .info h3{font-size:16px;font-weight:700;margin-bottom:3px}
+  .floor .info p{color:var(--muted);font-size:13.5px}
+  .floor.top .lvl{color:var(--amber)}
+  .floor.b1{background:repeating-linear-gradient(45deg,#0b0c12,#0b0c12 10px,#0e0f16 10px,#0e0f16 20px)}
+  .floor.b1 .lvl{color:var(--danger);background:#15090c;border-right-color:#2a1418}
+  .floor.b1 .info h3{color:var(--danger);display:flex;align-items:center;gap:10px}
+  .redact{background:var(--danger);color:var(--danger);border-radius:2px;user-select:none;padding:0 4px;letter-spacing:-1px;font-family:var(--mono)}
+  .redact:hover{color:#15090c}
+  .b1note{font-family:var(--mono);font-size:11px;color:#a8565f;letter-spacing:.05em;margin-top:6px}
+  .clf{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;border:1px solid var(--danger);color:var(--danger);padding:2px 7px;border-radius:2px}
+
+  /* ---------- footer ---------- */
+  footer{position:relative;z-index:2;border-top:1px solid var(--line);padding:46px 24px 70px;text-align:center}
+  footer .stamp{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--dim);line-height:2.2}
+  footer .stamp b{color:var(--gate)}
+
+  @media(max-width:760px){
+    .grid.c2,.grid.c3{grid-template-columns:1fr}
+    .rank{grid-template-columns:80px 1fr;gap:16px;padding:18px 18px}
+    .rank .tier{font-size:24px}
+    .timebox{flex-direction:column;gap:6px}
+    .topbar{font-size:9.5px;letter-spacing:.1em;padding:9px 14px}
+    .topbar .right{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .crack{stroke-dashoffset:0}
+    .eyebrow,.hero h1,.hero .sub,.scrollcue{opacity:1}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<div class="topbar">
+  <span class="blink">HUNTER ASSOCIATION · 기밀 자료실</span>
+  <span class="right">CLEARANCE LV.5 / 열람 기록됨</span>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="fracture" aria-hidden="true">
+    <svg viewBox="0 0 200 800" preserveAspectRatio="xMidYMid meet">
+      <path class="crack" d="M100 0 L96 90 L112 150 L92 230 L108 300 L88 380 L104 450 L90 540 L110 620 L94 710 L100 800"/>
+      <path class="crack branch" d="M96 90 L60 130 L72 180"/>
+      <path class="crack branch" d="M108 300 L150 340 L138 400"/>
+      <path class="crack branch" d="M90 540 L52 580 L66 630"/>
+    </svg>
+  </div>
+  <p class="eyebrow">2026 · REPUBLIC OF KOREA · WORLD ARCHIVE</p>
+  <h1>게이트</h1>
+  <p class="sub">10년 전, 세계 곳곳에 정체불명의 균열이 열렸다.<br>
+  그 너머에는 <b>현실과 다른 공간, 몬스터, 그리고 마정석</b>이 있었다.<br>
+  이것은 그 세계를 마주한 사람들 — <b>헌터</b>의 기록이다.</p>
+  <div class="scrollcue">아래로 열람<span></span></div>
+</header>
+
+<!-- ============ 01 게이트란 ============ -->
+<section id="gate">
+  <div class="wrap">
+    <div class="shead reveal"><span class="snum">01</span><span class="stag">The Gate</span></div>
+    <h2 class="stitle reveal">균열, 그리고 그 너머</h2>
+    <p class="slead reveal">게이트는 현실에 생긴 균열이며, 안쪽은 던전과 같은 별개의 공간이다.
+    방치하면 <b>붕괴와 함께 몬스터가 현실로 쏟아진다.</b></p>
+
+    <div class="grid c2 reveal">
+      <div class="cell">
+        <div class="k">STRUCTURE / 내부</div>
+        <h3>또 하나의 세계</h3>
+        <p>게이트 안은 현실과 다른 공간이다. 몬스터가 서식하고, 처치 시 마정석을 남긴다. 던전과 같은 형태로 구성된다.</p>
+      </div>
+      <div class="cell">
+        <div class="k">COLLAPSE / 붕괴</div>
+        <h3>시간이 지나면 무너진다</h3>
+        <p>모든 게이트는 일정 시간 후 붕괴한다. 공략에 실패하면 내부 몬스터가 현실에 출몰하고, 주변 지역이 오염된다.</p>
+      </div>
+      <div class="cell">
+        <div class="k">CRYSTAL / 마정석</div>
+        <h3>균열이 남기는 자원</h3>
+        <p>몬스터와 게이트가 남기는 결정. 협회가 유통을 통제하는 핵심 자원이자, 헌터 사회를 움직이는 동력이다.</p>
+      </div>
+      <div class="cell">
+        <div class="k">RESPONSE / 대응</div>
+        <h3>국가가 관리한다</h3>
+        <p>각국은 헌터 관리 협회를 세워 게이트를 공략한다. 등록된 헌터만이 정식으로 게이트에 입장할 수 있다.</p>
+      </div>
+    </div>
+
+    <div class="timebox reveal">
+      <div>
+        <span class="big">10년</span>
+        <span class="lbl">게이트 내부 체감 시간</span>
+      </div>
+      <span class="eq">=</span>
+      <div class="real">
+        <span class="big">10분</span>
+        <span class="lbl">바깥 현실 경과 시간</span>
+      </div>
+    </div>
+    <p class="slead reveal" style="margin-top:18px">게이트 안의 시간은 바깥에 영향을 주지 않는다.
+    안에서 <b>10년을 보내도 현실에서는 단 10분 남짓</b> 흐를 뿐이다.</p>
+  </div>
+</section>
+
+<!-- ============ 02 게이트 종류 ============ -->
+<section id="types">
+  <div class="wrap">
+    <div class="shead reveal"><span class="snum">02</span><span class="stag">Classification</span></div>
+    <h2 class="stitle reveal">게이트의 세 가지 유형</h2>
+    <p class="slead reveal">위로 갈수록 통제와 위험이 커진다. 종류에 따라 <b>탈출 조건이 전혀 다르다.</b></p>
+
+    <div class="types">
+      <div class="type t1 reveal">
+        <div class="row"><h3>일반 게이트</h3><span class="badge">OPEN · 개방형</span></div>
+        <p>입구가 열려 있어 누구나 입장할 수 있다. 가장 흔하고 기본적인 형태.</p>
+        <p class="clear">소멸 조건 — <b>보스 처치 시 게이트 소멸</b></p>
+      </div>
+      <div class="type t2 reveal">
+        <div class="row"><h3>폐쇄 게이트</h3><span class="badge">SEALED · 봉인형</span></div>
+        <p>일정 인원이 입장하면 입구가 닫히고 외부 통신이 차단된다. 들어가면 끝을 볼 때까지 나올 수 없다.</p>
+        <p class="clear">소멸 조건 — <b>보스 처치 시 게이트 소멸</b></p>
+      </div>
+      <div class="type t3 reveal">
+        <div class="row"><h3>심판 게이트</h3><span class="badge">JUDGEMENT · 시험형</span></div>
+        <p>게이트 자체가 의지를 가지고 공략자를 시험한다. 보스를 처치하는 것이 아니라, 주어진 조건을 충족해야 한다.</p>
+        <p class="clear">소멸 조건 — <b>내부 인원이 조건을 만족하고 전원 탈출 시 소멸</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 헌터 등급 ============ -->
+<section id="ranks">
+  <div class="wrap">
+    <div class="shead reveal"><span class="snum">03</span><span class="stag">Hunter Grade</span></div>
+    <h2 class="stitle reveal">헌터 등급 체계</h2>
+    <p class="slead reveal">협회가 공인하는 등급은 <b>F부터 S까지.</b> 그 위는 측정 자체가 불가능하다.</p>
+
+    <div class="ladder reveal">
+      <div class="rank r-fd">
+        <div class="tier">F·D</div>
+        <div class="body"><h3>보조 인력</h3><p>마정석 운반 등 잡무 담당. 실전 전투에는 거의 투입되지 않는다.</p></div>
+      </div>
+      <div class="rank r-cb">
+        <div class="tier">C·B</div>
+        <div class="body"><h3>실전 헌터</h3><p>실전 전투 전반을 보조한다. 10인 이상 편성으로 중소형 게이트를 공략한다.</p></div>
+      </div>
+      <div class="rank r-a">
+        <div class="tier">A</div>
+        <div class="body"><h3>핵심 전력</h3><p>헌터 관리국의 주력. 도시 단위 재난에 대응할 수 있는 수준.</p></div>
+      </div>
+      <div class="rank r-s">
+        <div class="tier">S</div>
+        <div class="body"><h3>국가 전략 병기급</h3><p>단독으로 게이트를 공략할 수 있는 최상위 공인 등급.</p></div>
+      </div>
+      <div class="rank r-ex">
+        <div class="tier">EX</div>
+        <div class="body">
+          <h3>규격외 · 등급 측정 불가</h3>
+          <p>측정이 불가능한 비공인 영역. 서류상으로는 S급으로 등록되지만, 현장에서는 저마다의 호칭으로 불린다.</p>
+          <div class="titles"><span>재앙급</span><span>왕좌급</span><span>그 외 비공식 호칭</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 헌터 협회 ============ -->
+<section id="assoc">
+  <div class="wrap">
+    <div class="shead reveal"><span class="snum">04</span><span class="stag">The Association</span></div>
+    <h2 class="stitle reveal">헌터 관리 협회</h2>
+    <p class="slead reveal">헌터 등록부터 게이트 봉쇄까지, <b>이 세계의 거의 모든 권한이 협회에 있다.</b></p>
+
+    <div class="subhead">공식 권한</div>
+    <div class="powers reveal">
+      <div class="power"><span class="dot">+</span>헌터 등록 / 등록증 발급</div>
+      <div class="power"><span class="dot">+</span>헌터 등급 측정</div>
+      <div class="power"><span class="dot">+</span>게이트 등급 판정</div>
+      <div class="power"><span class="dot">+</span>공략대 편성 승인</div>
+      <div class="power"><span class="dot">+</span>게이트 입장 허가</div>
+      <div class="power"><span class="dot">+</span>면허 정지 / 박탈</div>
+      <div class="power"><span class="dot">+</span>마정석 유통 관리</div>
+      <div class="power"><span class="dot">+</span>게이트 지역 봉쇄</div>
+      <div class="power"><span class="dot">+</span>고위험 헌터 감시</div>
+    </div>
+
+    <div class="subhead warn">⚠ 비공식 권한 — 외부 비공개</div>
+    <div class="powers hidden-set reveal">
+      <div class="power"><span class="dot">!</span>언론 통제</div>
+      <div class="power"><span class="dot">!</span>사고 기록 은폐</div>
+      <div class="power"><span class="dot">!</span>비밀 연구</div>
+    </div>
+
+    <div class="subhead">청사 구조 — 지하 1층 / 지상 6층</div>
+    <div class="building reveal">
+      <div class="floor top">
+        <div class="lvl">6F</div>
+        <div class="info"><h3>협회장실</h3><p>협회장 단독 사용. 사무실·응접실·생활공간을 갖춘 넓은 규모.</p></div>
+      </div>
+      <div class="floor">
+        <div class="lvl">5F</div>
+        <div class="info"><h3>협회 관리국</h3><p>사무·회계·인사 등 협회 전반의 서류 및 관리 업무.</p></div>
+      </div>
+      <div class="floor">
+        <div class="lvl">4F</div>
+        <div class="info"><h3>재난대응국</h3><p>게이트 붕괴 시 현장 출동·부상자 수습. 평시에는 협회 경호.</p></div>
+      </div>
+      <div class="floor">
+        <div class="lvl">3F</div>
+        <div class="info"><h3>헌터 / 게이트 통제국</h3><p>전국 CCTV 확인, 게이트 파악, 헌터 관리 및 감시.</p></div>
+      </div>
+      <div class="floor">
+        <div class="lvl">2F</div>
+        <div class="info"><h3>헌터 전문 병동</h3><p>외래·입원실·중환자실, 그리고 장례식장까지.</p></div>
+      </div>
+      <div class="floor">
+        <div class="lvl">1F</div>
+        <div class="info"><h3>민원실 / 등록실</h3><p>시민 민원 접수, 등급 측정 및 재측정, 헌터 등록.</p></div>
+      </div>
+      <div class="floor b1">
+        <div class="lvl">B1</div>
+        <div class="info">
+          <h3>연구실 <span class="clf">CLASSIFIED</span></h3>
+          <p>허가 인원만 출입 가능. 일반 헌터는 <span class="redact">██████</span> 존재조차 알 수 없다.
+          내부에서는 <span class="redact">█████ 개조</span>와 <span class="redact">███ 변이</span> 등 <span class="redact">████████</span>이 자행된다.</p>
+          <p class="b1note">// 비밀 구역 · 열람 권한 부족 · 기록 삭제됨</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p class="stamp">
+    HUNTER MANAGEMENT ASSOCIATION<br>
+    <b>게이트 세계관 아카이브</b> · 2026 / REPUBLIC OF KOREA<br>
+    본 문서의 무단 열람 및 유출은 협회 규정에 따라 처리됩니다.
+  </p>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{
+    el.style.transitionDelay=(i%4)*60+'ms';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>
